@@ -171,11 +171,19 @@ public class Davis_Putnam{
     public Clause_truth propogate(Clause_truth ct, String atom, String value){
         ct.B.put(atom, value);
 
+        if(value.equals("F")){
+            atom = "-"+atom;
+        }
+
+        ArrayList<String> new_clause = new ArrayList<String>();
+
         for(Iterator<String> iterator_c = ct.CS.iterator(); iterator_c.hasNext();){
             String clause = iterator_c.next();
-            String[] atoms = clause.split(" ");
-            Iterator<String> iterator_a = Arrays.asList(atoms).iterator();
+            List<String> atoms = Arrays.asList(clause.split(" "));
+            String n_clause = "";
+            Iterator<String> iterator_a = atoms.iterator();
 
+            boolean edited = false;
             while(iterator_a.hasNext()){
                 String c_atom = iterator_a.next();
 
@@ -186,17 +194,38 @@ public class Davis_Putnam{
 
                 if(value.equals("F")){
                     if(atom.equals(atom.substring(1))){
+                        edited = true;
                         iterator_a.remove();
                     }
                 }
                 else{
                     if(atom.equals("-"+atom)){
+                        edited = true;
                         iterator_a.remove();
                     }
                 }
             }
 
+            if(edited){
+                iterator_c.remove();
+                for(int i = 0; i < atoms.size(); i++){
+                    if(i == atoms.size() - 1){
+                        n_clause += atoms.get(i);
+                        break;
+                    }
+
+                    n_clause += atoms.get(i) + " ";
+                }
+
+                new_clause.add(n_clause);
+
+                edited = false;
+            }
             
+        }
+
+        for(String clause : new_clause){
+            ct.CS.add(clause);
         }
 
         return ct;
