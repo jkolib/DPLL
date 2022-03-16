@@ -45,9 +45,11 @@ public class Davis_Putnam{
 
     public void write_out(Clause_truth ct) throws FileNotFoundException, IOException{
         BufferedWriter bw = new BufferedWriter(new FileWriter("dpll_out.txt"));
-
-        for(String atom : ct.B.keySet()){
-            bw.write(atom + " " + ct.B.get(atom) + "\n");
+        
+        if(ct != null){
+            for(String atom : ct.B.keySet()){
+                bw.write(atom + " " + ct.B.get(atom) + "\n");
+            }
         }
 
         for(String line : this.back_end_lst){
@@ -180,8 +182,9 @@ public class Davis_Putnam{
         for(Iterator<String> iterator_c = ct.CS.iterator(); iterator_c.hasNext();){
             String clause = iterator_c.next();
             List<String> atoms = Arrays.asList(clause.split(" "));
+            ArrayList<String> alist_atoms = new ArrayList<String>(atoms);
             String n_clause = "";
-            Iterator<String> iterator_a = atoms.iterator();
+            Iterator<String> iterator_a = alist_atoms.iterator();
 
             boolean edited = false;
             while(iterator_a.hasNext()){
@@ -193,13 +196,13 @@ public class Davis_Putnam{
                 }
 
                 if(value.equals("F")){
-                    if(atom.equals(atom.substring(1))){
+                    if(c_atom.equals(atom.substring(1))){
                         edited = true;
                         iterator_a.remove();
                     }
                 }
                 else{
-                    if(atom.equals("-"+atom)){
+                    if(c_atom.equals("-"+atom)){
                         edited = true;
                         iterator_a.remove();
                     }
@@ -208,13 +211,13 @@ public class Davis_Putnam{
 
             if(edited){
                 iterator_c.remove();
-                for(int i = 0; i < atoms.size(); i++){
-                    if(i == atoms.size() - 1){
-                        n_clause += atoms.get(i);
+                for(int i = 0; i < alist_atoms.size(); i++){
+                    if(i == alist_atoms.size() - 1){
+                        n_clause += alist_atoms.get(i);
                         break;
                     }
 
-                    n_clause += atoms.get(i) + " ";
+                    n_clause += alist_atoms.get(i) + " ";
                 }
 
                 new_clause.add(n_clause);
