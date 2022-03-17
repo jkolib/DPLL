@@ -9,6 +9,7 @@ import java.util.*;
 public class Davis_Putnam{
     // for storing inputs
     public ArrayList<String> inp = new ArrayList<String>();
+    public ArrayList<String> inp_atoms = new ArrayList<String>();
     public Hashtable<String, String> truth_dict = new Hashtable<String,String>();
     public ArrayList<String> back_end_lst = new ArrayList<String>();
 
@@ -42,6 +43,20 @@ public class Davis_Putnam{
             // adding clauses to input list
             inp.add(in_text);
 
+            // adding new unique atoms to atoms list 
+            for(String atom : in_text.split(" ")){
+                if(atom.length() == 1){
+                    if(!this.inp_atoms.contains(atom)){
+                        inp_atoms.add(atom);
+                    }
+                }
+                else{
+                    if(!this.inp_atoms.contains(atom.substring(1))){
+                        inp_atoms.add(atom.substring(1));
+                    }
+                }
+            }
+
             in_text = br.readLine();
         }
 
@@ -53,7 +68,16 @@ public class Davis_Putnam{
 
         // checking that a solution exists and writing to file
         if(ct != null){
-            for(String atom : ct.B.keySet()){
+            // iterating over list of atoms
+            for(String atom : this.inp_atoms){
+                // checking if solution has assigned a value to atom
+                if(!ct.B.keySet().contains(atom)){
+                    // if not, atom can be assigned T or F, arbitrarily assigning T
+                    bw.write(atom + " T\n");
+                    continue;
+                }
+
+                // otherwise, writing atom and its assigned value
                 bw.write(atom + " " + ct.B.get(atom) + "\n");
             }
         }
@@ -87,7 +111,7 @@ public class Davis_Putnam{
             }
         }
 
-        Clause_truth ct_copy = new Clause_truth(ct.CS, ct.B); // creating copy of current ct
+        Clause_truth ct_copy = new Clause_truth(ct.getCS(), ct.getB()); // creating copy of current ct
 
         String atom = ct.get_unbound(); // getting the first atom not assigned a truth value
 
@@ -293,8 +317,16 @@ class Clause_truth{
     }
 
     public Clause_truth(ArrayList<String> cs, Hashtable<String, String> b){
-        this.CS = cs;
-        this.B = b;
+        this.CS = new ArrayList<String>(cs);
+        this.B = new Hashtable<String, String>(b);
+    }
+
+    public ArrayList<String> getCS(){
+        return this.CS;
+    }
+
+    public Hashtable<String, String> getB(){
+        return this.B;
     }
 
     public String get_unbound(){
