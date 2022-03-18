@@ -45,14 +45,14 @@ public class Davis_Putnam{
 
             // adding new unique atoms to atoms list 
             for(String atom : in_text.split(" ")){
-                if(atom.length() == 1){
+                if(!atom.contains("-")){
                     if(!this.inp_atoms.contains(atom)){
                         inp_atoms.add(atom);
                     }
                 }
                 else{
-                    if(!this.inp_atoms.contains(atom.substring(1))){
-                        inp_atoms.add(atom.substring(1));
+                    if(!this.inp_atoms.contains(atom.substring(1, atom.length()))){
+                        inp_atoms.add(atom.substring(1, atom.length()));
                     }
                 }
             }
@@ -155,7 +155,7 @@ public class Davis_Putnam{
         // pure literal case, iterating over literals in p_literal
         for(String atom : p_literal){
             // if literal is not negated, checking if its negation is present
-            if(atom.length() == 1){
+            if(!atom.contains("-")){
                 // if negation not present, storing pure literal and returning true
                 if(!p_literal.contains("-"+atom)){
                     ct.p_literal = atom;
@@ -166,7 +166,7 @@ public class Davis_Putnam{
             // else, checking if non-negated literal is present
             else{
                 // if non-negated present, storing pure literal and returning true
-                if(!p_literal.contains(atom.substring(1))){
+                if(!p_literal.contains(atom.substring(1, atom.length()))){
                     ct.p_literal = atom;
                     return true;
                 }
@@ -255,7 +255,7 @@ public class Davis_Putnam{
                 // input literal is negated
                 if(value.equals("F")){
                     // removing clause literal if it is same atom, different sign to input literal
-                    if(c_atom.equals(atom.substring(1))){
+                    if(c_atom.equals(atom.substring(1, atom.length()))){
                         edited = true;
                         iterator_a.remove();
                     }
@@ -335,7 +335,7 @@ class Clause_truth{
             // iteraing over literals in clause
             for(String atom : clause.split(" ")){
                 // if literal is not negated
-                if(atom.length() == 1){
+                if(!atom.contains("-")){
                     // checking if atom was not assigned a value
                     if(!B.containsKey(atom)){
                         return atom;
@@ -345,7 +345,7 @@ class Clause_truth{
                 // if literal is negated
                 else{
                     // checking if atom was not assigned a value
-                    if(!B.containsKey(atom.substring(1))){
+                    if(!B.containsKey(atom.substring(1, atom.length()))){
                         return atom;
                     }
                 }
