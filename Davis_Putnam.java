@@ -185,7 +185,7 @@ public class Davis_Putnam{
             // singleton is a negation
             if(ct.singleton.contains("-")){
                 // calculating values of atom and value
-                atom = ct.singleton.substring(1);
+                atom = ct.singleton.substring(1, ct.singleton.length());
                 value = "F";
             }
 
@@ -203,7 +203,7 @@ public class Davis_Putnam{
         if(!ct.p_literal.isBlank()){
             // literal is a negation
             if(ct.p_literal.contains("-")){
-                atom = ct.p_literal.substring(1);
+                atom = ct.p_literal.substring(1, ct.p_literal.length());
                 value = "F";
             }
 
@@ -214,13 +214,22 @@ public class Davis_Putnam{
             }
 
             ct.p_literal = ""; // resetting stored pure literal value
+
+            return propogate(ct, atom, value);
         }
 
-        return propogate(ct, atom, value);
+        return ct;
     }
 
     public Clause_truth propogate(Clause_truth ct, String atom, String value){
-        ct.B.put(atom, value); // adding atom and its assigned value to dictionary
+        // adding atom and its assigned value to dictionary
+        if(atom.contains("-")){
+            atom = atom.substring(1, atom.length());
+            ct.B.put(atom, value);
+        }
+        else{
+            ct.B.put(atom, value);
+        }
 
         // making atom into a literal
         if(value.equals("F")){
