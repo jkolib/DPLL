@@ -134,13 +134,13 @@ public class Front_end {
     public void write_propositions() throws IOException{
         BufferedWriter bw = new BufferedWriter(new FileWriter("fe_out.txt"));
 
-        write_prop8(bw);
-        write_prop6_7(bw);
-        write_prop4(bw);
-        write_prop3(bw);
         write_prop1(bw);
         write_prop2(bw);
+        write_prop3(bw);
+        write_prop4(bw);
         write_prop5(bw);
+        write_prop6_7(bw);
+        write_prop8(bw);
 
         bw.write("0\n");
 
@@ -254,14 +254,20 @@ public class Front_end {
     }
 
     public void write_prop1(BufferedWriter bw) throws IOException{
+        ArrayList<String> a_list = new ArrayList<String>();
+
         for(int i = 0; i <= this.num_steps; i++){
             for(String node1 : this.nodes){
                 String at_atom1 = make_at_atom(node1, String.valueOf(i));
 
                 for(String node2 : this.nodes){
-                    if(!node2.equals(node1)){
-                        String at_atom2 = make_at_atom(node2, String.valueOf(i));
+                    String at_atom2 = make_at_atom(node2, String.valueOf(i));
+                    String combo1 = at_atom1+" "+at_atom2;
+                    String combo2 = at_atom2+" "+at_atom1;
 
+                    if(!node2.equals(node1) && !a_list.contains(combo1) && !a_list.contains(combo2)){
+                        a_list.add(combo1);
+                        a_list.add(combo2);
                         bw.write("-"+this.atom_encoding.get(at_atom1)+" -"+this.atom_encoding.get(at_atom2)+"\n");
                     }
                 }
