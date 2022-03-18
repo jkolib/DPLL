@@ -123,12 +123,25 @@ public class Front_end {
         return atom.substring(atom.indexOf("(")+1, atom.indexOf(","));
     }
 
+    public String make_at_atom(String name, String time){
+        return "At("+name+","+time+")";
+    }
+
+    public String make_has_atom(String name, String time){
+        return "Has("+name+","+time+")";
+    }
+
     public void write_propositions() throws IOException{
         BufferedWriter bw = new BufferedWriter(new FileWriter("fe_out.txt"));
 
         write_prop8(bw);
         write_prop6_7(bw);
         write_prop4(bw);
+        write_prop3(bw);
+        write_prop1(bw);
+        write_prop2(bw);
+
+
 
         bw.write("0\n");
 
@@ -177,7 +190,58 @@ public class Front_end {
 
     public void write_prop3(BufferedWriter bw) throws IOException{
         for(int i = 0; i <= this.num_steps; i++){
+            for(String node_name : this.encoding.keySet()){
+                Node node = this.encoding.get(node_name);
 
+                if(node.treasures != null){
+                    for(String treasure : node.treasures){
+                        String at_atom = make_at_atom(node_name, String.valueOf(i));
+                        String has_atom = make_has_atom(treasure, String.valueOf(i));
+
+                        bw.write("-"+this.atom_encoding.get(at_atom)+" "+this.atom_encoding.get(has_atom)+"\n");
+                    }
+                }
+            }
+        }
+    }
+
+    public void write_prop2(BufferedWriter bw) throws IOException{
+        for(int i = 0; i < this.num_steps; i++){
+            for(String node_name : this.encoding.keySet()){
+                Node node = this.encoding.get(node_name);
+
+                if(node.next != null){
+                    String current_node = make_at_atom(node_name, String.valueOf(i));
+                    String out = "-"+this.atom_encoding.get(current_node);
+
+                    for(String next : node.next){
+                        String at_next = make_at_atom(next, String.valueOf(i+1));
+                        String code = String.valueOf(this.atom_encoding.get(at_next));
+                        out += " "+code;
+
+                        System.out.println("-"+current_node+" "+at_next);
+                    }
+                    
+                    System.out.println();
+                    bw.write(out+"\n");
+                }
+            }
+        }
+    }
+
+    public void write_prop1(BufferedWriter bw) throws IOException{
+        for(int i = 0; i <= this.num_steps; i++){
+            for(String node1 : this.nodes){
+                String at_atom1 = make_at_atom(node1, String.valueOf(i));
+
+                for(String node2 : this.nodes){
+                    if(!node2.equals(node1)){
+                        String at_atom2 = make_at_atom(node2, String.valueOf(i));
+
+                        bw.write("-"+this.atom_encoding.get(at_atom1)+" -"+this.atom_encoding.get(at_atom2)+"\n");
+                    }
+                }
+            }
         }
     }
 }
